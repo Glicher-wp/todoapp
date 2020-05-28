@@ -10,5 +10,6 @@
 		{{ profile_form.as_p }}
 		{% csrf_token %}
 		<button type="submit">Сохранить</button>
+		<a href={% url 'password_change' %}>Сменить пароль</a>
 	</form>
 {% endblock %}
