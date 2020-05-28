@@ -108,7 +108,6 @@ def index(request):
 
 
 def complete_task(request, uid):
-    print(uid)
     t = TodoItem.objects.get(id=uid)
     t.is_completed = True
     t.save()

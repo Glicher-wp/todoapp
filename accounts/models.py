@@ -8,4 +8,3 @@ class Profile(models.Model):
 
     def __str__(self):
         return "Профиль пользователя %s % self.user.username"
-
