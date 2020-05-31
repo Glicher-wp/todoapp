@@ -132,9 +132,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-EMAIL_HOST = 'smtp.mail.ru'
-EMAIL_HOST_USER = 'tester_user00@mail.ru'
-EMAIL_HOST_PASSWORD = 'SZmv8W9)[AFz-sX'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'terisht285@gmail.com'
+EMAIL_HOST_PASSWORD = 'Adept285459'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
