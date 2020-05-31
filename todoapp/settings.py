@@ -132,10 +132,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_HOST_USER = 'testerhost@yandex.ru'
-EMAIL_HOST_PASSWORD = 'TesterHost259459'
-EMAIL_PORT = 465
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'terisht285@gmail.com'
+EMAIL_HOST_PASSWORD = 'Adept285459'
+EMAIL_PORT = 657
 EMAIL_USE_TLS = True
 
 django_heroku.settings(locals())
