@@ -34,6 +34,7 @@ class TaskCreateView(View):
             new_task = form.save(commit=False)
             new_task.owner = request.user
             new_task.save()
+            messages.success(request, "Задача успешно создана")
             return redirect(reverse("tasks:list"))
 
         return self.my_render(request, form)
@@ -56,6 +57,7 @@ class TaskEditView(LoginRequiredMixin, View):
             new_task = form.save(commit=False)
             new_task.owner = request.user
             new_task.save()
+            messages.success(request, "Профиль успешно изменен")
             return redirect(reverse("tasks:list"))
 
         return render(request, "tasks/edit.html", {"form": form, "task": t})
@@ -111,6 +113,7 @@ def complete_task(request, uid):
     t = TodoItem.objects.get(id=uid)
     t.is_completed = True
     t.save()
+    messages.success(request, "Задача выполнена")
     return HttpResponse("OK")
 
 
@@ -119,18 +122,6 @@ def delete_task(request, uid):
     t.delete()
     messages.success(request, "Задача удалена")
     return redirect(reverse("tasks:list"))
-
-
-def task_create(request):
-    if request.method == "POST":
-        form = TodoItemForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("/tasks/list")
-    else:
-        form = TodoItemForm()
-
-    return render(request, "tasks/create.html", {"form": form})
 
 
 def add_task(request):
