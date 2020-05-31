@@ -34,7 +34,7 @@ class TaskCreateView(View):
             new_task = form.save(commit=False)
             new_task.owner = request.user
             new_task.save()
-            messages.success(request, "Задача успешно создана")
+            messages.success(request, "Задача была успешно создана")
             return redirect(reverse("tasks:list"))
 
         return self.my_render(request, form)
@@ -57,8 +57,10 @@ class TaskEditView(LoginRequiredMixin, View):
             new_task = form.save(commit=False)
             new_task.owner = request.user
             new_task.save()
-            messages.success(request, "Профиль успешно изменен")
+            messages.success(request, "Задача успешно изменена")
             return redirect(reverse("tasks:list"))
+        else:
+            messages.error(request, "Что-то пошло не так, попробуйте снова")
 
         return render(request, "tasks/edit.html", {"form": form, "task": t})
 
@@ -122,14 +124,6 @@ def delete_task(request, uid):
     t.delete()
     messages.success(request, "Задача удалена")
     return redirect(reverse("tasks:list"))
-
-
-def add_task(request):
-    if request.method == 'POST':
-        desc = request.POST["description"]
-        t = TodoItem(description=desc)
-        t.save()
-    return reverse("tasks:list")
 
 
 def tasks_list(request):
