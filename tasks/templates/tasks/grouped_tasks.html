@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Группировка задач{% endblock %}
+
+{% block extra_head %}
+<script src="{% static 'js/script.js' %}"></script>
+{% endblock %}
+
+{% block main_content %}
+<h1>Текущие задачи по группам</h1>
+<p><i class="fa fa-download"></i>&nbsp;<a href="{% url 'tasks:export' %}">экспорт</a></p>
+<ul id="todo-list">
+{% for task in tasks %}
+		{% if task.priority == task.PRIORITY_HIGH %}		
+			<div id="PRIORITY_HIGH">
+				{% if task.is_completed %}
+					<li class="completed">
+					<input class='checkbox' data-uid={{ task.id }} type="checkbox" 
+						disabled="disabled" checked="checked"/>
+				{% else %}
+					<li>
+					<input class="checkbox" data-uid={{ task.id }} type="checkbox"/>
+				{% endif %}
+				<span class="badge badge-pill badge-danger">&nbsp;</span>
+				<a href={% url "tasks:details" task.id %}>{{ task }}</a>
+				<a class="remove" href={% url "tasks:delete" task.id %}>X</a>
+				<hr/>
+					</li>
+		{% endif %}
+	{% endfor %}
+			{% for task in tasks %}
+			{% if task.priority == task.PRIORITY_MEDIUM %}
+			<div class="block2">
+			{% if task.is_completed %}
+					<li class="completed">
+					<input class='checkbox' data-uid={{ task.id }} type="checkbox" 
+						disabled="disabled" checked="checked"/>
+				{% else %}
+					<li>
+					<input class="checkbox" data-uid={{ task.id }} type="checkbox"/>
+				{% endif %}
+				<span class="badge badge-pill badge-secondary">&nbsp;</span>
+				<a href={% url "tasks:details" task.id %}>{{ task }}</a>
+				<a class="remove" href={% url "tasks:delete" task.id %}>X</a>
+				<hr/>
+					</li>
+			{% endif %}
+		{% endfor %}
+		{% for task in tasks %}
+			{% if task.priority == task.PRIORITY_LOW %}
+			<div class="block3">
+			{% if task.is_completed %}
+					<li class="completed">
+					<input class='checkbox' data-uid={{ task.id }} type="checkbox" 
+						disabled="disabled" checked="checked"/>
+				{% else %}
+					<li>
+					<input class="checkbox" data-uid={{ task.id }} type="checkbox"/>
+				{% endif %}
+				<span class="badge badge-pill badge-success">&nbsp;</span>
+				<a href={% url "tasks:details" task.id %}>{{ task }}</a>
+				<a class="remove" href={% url "tasks:delete" task.id %}>X</a>
+				</div>
+			<hr/>
+		</li>
+			{% endif %}
+			{% endfor %}
+	</ul>
+{% endblock %}

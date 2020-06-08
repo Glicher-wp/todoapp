@@ -19,6 +19,7 @@
 			{{ object.is_completed|yesno:'Выполнена ,Не выполнена' }}
 		</li>	
 		<li><i class="far fa-calendar-alt"></i>&nbsp;Создана: {{ object.created|date:'Y-b-d H:i' }}</li>
+		<li>Создана {{ object.delta_time }} дней(ня) назад</li>
 		<li><i class="far fa-clock"></i>&nbsp;Последнее изменение: {{ object.updated|date:'Y-b-d H:i' }}</li>
 		<li><i class="far fa-edit"></i>&nbsp;<a href="{% url 'tasks:edit' pk=object.pk %}">Редактировать</a></li>
 	</ul>

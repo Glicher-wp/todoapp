@@ -12,6 +12,8 @@ from django.contrib import messages
 from django.db.models import Q
 from django.conf import settings
 from django.core.mail import send_mail
+from datetime import datetime, timedelta
+
 
 class TaskListView(LoginRequiredMixin, ListView):
     model = TodoItem
@@ -22,6 +24,14 @@ class TaskListView(LoginRequiredMixin, ListView):
         qs = super().get_queryset()
         u = self.request.user
         return qs.filter(owner=u)
+
+
+class TaskListUncompleted(TaskListView):
+    template_name = "tasks/uncompleted_list.html"
+
+
+class TaskListGrouped(TaskListView):
+    template_name = "tasks/grouped_tasks.html"
 
 
 class TaskCreateView(View):
@@ -47,6 +57,9 @@ class TaskCreateView(View):
 class TaskDetailsView(DetailView):
     model = TodoItem
     template_name = 'tasks/details.html'
+    # delta = TodoItem.delta_time - timedelta(TodoItem.created)
+    # extra_context = {"time": delta}
+
 
 
 class TaskEditView(LoginRequiredMixin, View):

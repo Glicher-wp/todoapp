@@ -38,6 +38,8 @@ crossorigin="anonymous"></script>
 								<li><a href="{% url 'edit' %}">профиль</a></li>
 								<li><a href="{% url 'tasks:create' %}">добавить задачу</a></li>
 								<li><a href="{% url 'tasks:list' %}">задачи</a></li>
+								<li><a href="{% url 'tasks:uncompleted' %}">не выполнены</a></li>
+								<li><a href="{% url 'tasks:grouped' %}">группировка</a>
 								<li><a href="{% url 'logout' %}">выйти</a></li>
 							</ul>
 						{% endif %}

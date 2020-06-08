@@ -135,7 +135,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'terisht285@gmail.com'
 EMAIL_HOST_PASSWORD = 'Adept285459'
-EMAIL_PORT = 657
+EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 django_heroku.settings(locals())

@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
+from datetime import datetime, timezone
 
 # Create your models here.
 
@@ -26,8 +27,10 @@ class TodoItem(models.Model):
         related_name='tasks')
     priority = models.IntegerField("Приоритет", choices=PRIORITY_CHOICES, default=PRIORITY_MEDIUM)
 
-
-
+    def delta_time(self):
+        delta = (datetime.now(timezone.utc) - self.created).days
+        print(delta)
+        return delta
 
     def __str__(self):
         return self.description.lower()
