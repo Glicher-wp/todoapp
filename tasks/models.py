@@ -2,6 +2,8 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
 from datetime import datetime, timezone
+from taggit.managers import TaggableManager
+from todoapp.ru_taggit import RuTaggedItem
 
 # Create your models here.
 
@@ -26,6 +28,8 @@ class TodoItem(models.Model):
         on_delete=models.CASCADE,
         related_name='tasks')
     priority = models.IntegerField("Приоритет", choices=PRIORITY_CHOICES, default=PRIORITY_MEDIUM)
+
+    tags = TaggableManager(through=RuTaggedItem)
 
     def delta_time(self):
         delta = (datetime.now(timezone.utc) - self.created).days

@@ -10,6 +10,14 @@
 {% block main_content %}
 <h1>Текущие задачи</h1>
 <p><i class="fa fa-download"></i>&nbsp;<a href="{% url 'tasks:export' %}">экспорт</a></p>
+<ul class="list-inline">
+	{% for tag in tags %}
+		<li class="list-inline-item">
+			<span class="badge badge-info">{{ tag }}</span>
+		</li>
+	{% endfor %}
+</ul>
+{% endblock %}
 <ul id="todo-list">
 {% for task in tasks %}
 	{% if task.is_completed %}
@@ -19,7 +27,7 @@
 	{% else %}
 		<li>
 			<input class="checkbox" data-uid={{ task.id }} type="checkbox"/>
-		{% endif %}
+	{% endif %}
 			{% if task.priority == task.PRIORITY_HIGH %}
 			<span class="badge badge-pill badge-danger">&nbsp;</span>
 			{% elif task.priority == task.PRIORITY_MEDIUM %}
@@ -34,4 +42,3 @@
 		</li>
 {% endfor %}
 </ul>
-{% endblock %}

@@ -12,7 +12,8 @@ from django.contrib import messages
 from django.db.models import Q
 from django.conf import settings
 from django.core.mail import send_mail
-from datetime import datetime, timedelta
+from django.shortcuts import redirect, render, get_object_or_404
+from taggit.models import Tag
 
 
 class TaskListView(LoginRequiredMixin, ListView):
@@ -24,6 +25,17 @@ class TaskListView(LoginRequiredMixin, ListView):
         qs = super().get_queryset()
         u = self.request.user
         return qs.filter(owner=u)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        user_tasks = self.get_queryset()
+        tags = []
+        for t in user_tasks:
+            tags.append(list(t.tags.all()))
+            
+        context['tags'] = filter_tags(tags)
+        return context
 
 
 class TaskListUncompleted(TaskListView):
@@ -44,6 +56,7 @@ class TaskCreateView(View):
             new_task = form.save(commit=False)
             new_task.owner = request.user
             new_task.save()
+            form.save_m2m()
             messages.success(request, "Задача была успешно создана")
             return redirect(reverse("tasks:list"))
 
@@ -142,3 +155,33 @@ def delete_task(request, uid):
 def tasks_list(request):
     all_tasks = TodoItem.objects.all()
     return render(request, 'tasks/list.html', {'tasks': all_tasks})
+
+
+def filter_tags(tags):
+    tasks_tags = []
+    for tag in tags:
+        for i in tag:
+            if i not in tasks_tags:
+                tasks_tags.append(i)
+    return tasks_tags
+
+
+def tasks_by_tag(request, tag_slug=None):
+    u = request.user
+    tasks = TodoItem.objects.filter(owner=u).all()
+
+    tag = None
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        tasks = tasks.filter(tags__in=[tag])
+
+    all_tags = []
+    for t in tasks:
+        all_tags.append(list(t.tags.all()))
+    all_tags = filter_tags(all_tags)
+
+    return render(
+        request,
+        "tasks/list_by_tag.html",
+        {"tag": tag, "tasks": tasks, "all_tags": all_tags},
+        )

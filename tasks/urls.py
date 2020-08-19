@@ -8,7 +8,9 @@ app_name = "tasks"
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('list/', views.TaskListView.as_view(), name='list'),
+    #path('list/', views.TaskListView.as_view(), name='list'),
+    path('list/', views.tasks_by_tag, name='list'),
+    path('list/tag/<slug:tag_slug>', views.tasks_by_tag, name='list_by_tag'),
     path('list/uncompleted/', views.TaskListUncompleted.as_view(), name="uncompleted"),
     path('list/grouped/', views.TaskListGrouped.as_view(), name="grouped"),
     path('create/', views.TaskCreateView.as_view(), name='create'),
