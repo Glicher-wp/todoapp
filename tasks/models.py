@@ -3,9 +3,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from datetime import datetime, timezone
 from taggit.managers import TaggableManager
-from todoapp.ru_taggit import RuTaggedItem
-
-# Create your models here.
+from ru_taggit import RuTaggedItem
 
 
 class TodoItem(models.Model):
