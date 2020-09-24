@@ -67,7 +67,6 @@ def edit(request):
     else:
         user_form = UserEditForm(instance=request.user)
         profile_form = ProfileEditForm(instance=request.user)
-        messages.success(request, "Что-то пошло не так. Попробуйте снова")
 
     return render(
         request,
