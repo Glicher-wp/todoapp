@@ -21,7 +21,23 @@
 		<li><i class="far fa-calendar-alt"></i>&nbsp;Создана: {{ object.created|date:'Y-b-d H:i' }}</li>
 		<li>Создана {{ object.delta_time }} дней(ня) назад</li>
 		<li><i class="far fa-clock"></i>&nbsp;Последнее изменение: {{ object.updated|date:'Y-b-d H:i' }}</li>
+		<li class="trello_id">ID таски в трелло: {{ object.TRELLO_ID }}</li>
 		<li><i class="far fa-edit"></i>&nbsp;<a href="{% url 'tasks:edit' pk=object.pk %}">Редактировать</a></li>
+		{% for t in object.tags.all %}
+		{% if forloop.first %}<ul class="list-inline">
+			<li class="list-inline-item">Тэги задачи:</li>
+		{% endif %}
+		<li class="list-inline-item">
+		<a href="{% url "tasks:list_by_tag" t.slug %}">
+		{% if t.pk == tag.pk %}
+			<a href="{% url "tasks:list" %}"><span class="badge badge-success">{{ t.name }}</span></a>
+		{% else %}
+			<span class="badge badge-info">{{ t.name }}</span>
+		{% endif %}
+		</a>
+		</li>
+		{% if forloop.last %}</ul>{% endif %}
+	{% endfor %}
 	</ul>
 	<i class="fas fa-clipboard-list"></i>&nbsp;<a href="{% url 'tasks:list' %}">Назад к списку</a>
 {% endblock %}

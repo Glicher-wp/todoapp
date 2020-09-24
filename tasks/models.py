@@ -3,7 +3,6 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from datetime import datetime, timezone
 from taggit.managers import TaggableManager
-from ru_taggit import RuTaggedItem
 
 
 class TodoItem(models.Model):
@@ -26,8 +25,10 @@ class TodoItem(models.Model):
         on_delete=models.CASCADE,
         related_name='tasks')
     priority = models.IntegerField("Приоритет", choices=PRIORITY_CHOICES, default=PRIORITY_MEDIUM)
+    TRELLO_ID = models.CharField(max_length=64, blank=True, null=True)
+    board_id = models.CharField(max_length=64, blank=True, null=True)
 
-    tags = TaggableManager(through=RuTaggedItem)
+    tags = TaggableManager()
 
     def delta_time(self):
         delta = (datetime.now(timezone.utc) - self.created).days

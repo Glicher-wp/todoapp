@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.urls import reverse
 from .models import TodoItem
-from .forms import TodoItemForm, TodoItemExportForm
+from .forms import TodoItemForm, TodoItemExportForm, ImportTaskForm
 from django.views import View
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
@@ -14,7 +14,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render, get_object_or_404
 from taggit.models import Tag
-
+from trello import TrelloClient
 
 class TaskListView(LoginRequiredMixin, ListView):
     model = TodoItem
@@ -74,7 +74,6 @@ class TaskDetailsView(DetailView):
     # extra_context = {"time": delta}
 
 
-
 class TaskEditView(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         t = TodoItem.objects.get(id=pk)
@@ -96,6 +95,36 @@ class TaskEditView(LoginRequiredMixin, View):
         return render(request, "tasks/edit.html", {"form": form, "task": t})
 
 
+class TaskImportView(View):
+
+    def my_render(self, request, form):
+        return render(request, "tasks/import.html", {"form": form})
+
+    def post(self, request, *args, **kwargs):
+        form = ImportTaskForm(request.POST)
+        key = request.user.profile.key
+        secret = request.user.profile.token
+        if key and secret:
+            client = TrelloClient(key, secret)
+        if form.is_valid():
+            form = form['board_id'].value()
+            u = request.user
+            tasks = TodoItem.objects.filter(owner=u).all()
+            tasks.delete()
+            new_tasks = tasks_import(client, form)
+            for task in new_tasks:
+                created_task = TodoItem(owner=u, description=task.name, TRELLO_ID=task.id).save()
+
+            messages.success(request, "Задачи были успешно импортированны")
+            return redirect(reverse("tasks:list"))
+
+        return self.my_render(request, form)
+
+    def get(self, request, *args, **kwargs):
+        form = ImportTaskForm()
+        return self.my_render(request, form)
+
+
 class TaskExportView(LoginRequiredMixin, View):
     def generate_body(self, user, priorities):
         q = Q()
@@ -113,7 +142,6 @@ class TaskExportView(LoginRequiredMixin, View):
                 body += f"[x] {t.description} ({t.get_priority_display()})\n"
             else:
                 body += f"[] {t.description} ({t.get_priority_display()})\n"
-
         return body
 
     def post(self, request, *args, **kwargs):
@@ -141,20 +169,26 @@ def complete_task(request, uid):
     t = TodoItem.objects.get(id=uid)
     t.is_completed = True
     t.save()
+    if t.TRELLO_ID:
+        key = request.user.profile.key
+        secret = request.user.profile.token
+        client = TrelloClient(key, secret)
+        card = client.get_card(t.TRELLO_ID)
+        board_id = card.board_id
+        board = client.get_board(board_id)
+        card.change_list(board.list_lists()[-1].id)
     messages.success(request, "Задача выполнена")
     return HttpResponse("OK")
 
 
-def delete_task(request, uid):
+def delete_task(request, uid, tag_slug=None):
     t = TodoItem.objects.get(id=uid)
     t.delete()
     messages.success(request, "Задача удалена")
-    return redirect(reverse("tasks:list"))
-
-
-def tasks_list(request):
-    all_tasks = TodoItem.objects.all()
-    return render(request, 'tasks/list.html', {'tasks': all_tasks})
+    if tag_slug:
+        return redirect(reverse("tasks:list_by_tag", kwargs={"tag_slug": tag_slug}))
+    else:
+        return redirect(reverse("tasks:list"))
 
 
 def filter_tags(tags):
@@ -180,8 +214,23 @@ def tasks_by_tag(request, tag_slug=None):
         all_tags.append(list(t.tags.all()))
     all_tags = filter_tags(all_tags)
 
+    task_counter = len(tasks)
+
     return render(
         request,
         "tasks/list_by_tag.html",
-        {"tag": tag, "tasks": tasks, "all_tags": all_tags},
+        {"tag": tag, "tasks": tasks, "all_tags": all_tags, "task_counter": task_counter},
         )
+
+
+def tasks_import(client, board_id):
+    """
+    :param key: Trello key
+    :param secret: Trello secret token
+    :param board_id: id board from which user want's to import tasks
+    :return: list of Trello cards from the selected board
+    """
+    board = client.get_board(str(board_id))
+    to_do = board.list_lists()[0]
+    tasks = to_do.list_cards()
+    return tasks

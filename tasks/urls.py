@@ -16,7 +16,9 @@ urlpatterns = [
     path('create/', views.TaskCreateView.as_view(), name='create'),
     path('list/complete/<int:uid>', views.complete_task, name='complete'),
     path('list/delete/<int:uid>', views.delete_task, name='delete'),
+    path('list/tag/<slug:tag_slug>/delete/<int:uid>', views.delete_task, name='delete_tag_list'),
     path('details/<int:pk>', views.TaskDetailsView.as_view(), name='details'),
     path('edit/<int:pk>', views.TaskEditView.as_view(), name='edit'),
+    path('import/', views.TaskImportView.as_view(), name='import'),
     path('export/', views.TaskExportView.as_view(), name='export'),
 ]
