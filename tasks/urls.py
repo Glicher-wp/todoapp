@@ -21,4 +21,5 @@ urlpatterns = [
     path('edit/<int:pk>', views.TaskEditView.as_view(), name='edit'),
     path('import/', views.TaskImportView.as_view(), name='import'),
     path('export/', views.TaskExportView.as_view(), name='export'),
+    path('bugtest/', views.zero_devision_test)
 ]

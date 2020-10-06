@@ -12,6 +12,14 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 import django_heroku
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+
+sentry_sdk.init(
+    dsn="https://0c3e0f03bbf242b4b925645aa4f3b2ce@o457907.ingest.sentry.io/5454678",
+    integrations=[DjangoIntegration()],
+)
 
 
 
@@ -43,10 +51,12 @@ INSTALLED_APPS = [
     'tasks.apps.TasksConfig',
     'accounts.apps.AccountsConfig',
     'taggit',
+    'debug_toolbar',
 ]
 
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -128,6 +138,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+INTERNAL_IPS = ['127.0.0.1', 'localhost']
 
 LOGIN_REDIRECT_URL = "tasks:list"
 
@@ -136,10 +148,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+django_heroku.settings(locals())
+
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'terisht285@gmail.com'
 EMAIL_HOST_PASSWORD = 'Faiska259459'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-django_heroku.settings(locals())
+

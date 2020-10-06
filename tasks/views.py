@@ -234,3 +234,7 @@ def tasks_import(client, board_id):
     to_do = board.list_lists()[0]
     tasks = to_do.list_cards()
     return tasks
+
+
+def zero_devision_test(request):
+    1/0
