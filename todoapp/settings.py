@@ -16,8 +16,10 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
 
+django_heroku.settings(locals())
+
 sentry_sdk.init(
-    dsn="https://0c3e0f03bbf242b4b925645aa4f3b2ce@o457907.ingest.sentry.io/5454678",
+    dsn=os.environ.get("dsn"),
     integrations=[DjangoIntegration()],
 )
 
@@ -148,12 +150,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-django_heroku.settings(locals())
-
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'terisht285@gmail.com'
-EMAIL_HOST_PASSWORD = 'Faiska259459'
-EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT"))
 EMAIL_USE_TLS = True
 
 
