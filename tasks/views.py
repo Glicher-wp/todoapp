@@ -1,20 +1,21 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.urls import reverse
-from .models import TodoItem
-from .forms import TodoItemForm, TodoItemExportForm, ImportTaskForm
 from django.views import View
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render, get_object_or_404
 from taggit.models import Tag
 from trello import TrelloClient
+from .models import TodoItem, TagCount, PriorityCount
+from .forms import TodoItemForm, TodoItemExportForm, ImportTaskForm
+
 
 class TaskListView(LoginRequiredMixin, ListView):
     model = TodoItem
@@ -162,7 +163,27 @@ class TaskExportView(LoginRequiredMixin, View):
 
 @login_required
 def index(request):
-    return HttpResponse("Примитивный ответ из приложения tasks")
+    # counts = Tag.objects.annotate(total_tasks=Count('todoitem')).order_by("-total_tasks")
+    #
+    # counts = {
+    #     c.name: c.total_tasks
+    #     for c in counts
+    # }
+
+    counts = TagCount.objects.all().order_by("-tag_count")
+    priority_counts = PriorityCount.objects.all()
+
+    counts = {
+        c.tag_name: c.tag_count
+        for c in counts
+    }
+
+    priority_counts = {
+        p.priority: p.priority_count
+        for p in priority_counts
+    }
+
+    return render(request, "tasks/index.html", {"counts": counts, "p_counts": priority_counts})
 
 
 def complete_task(request, uid):
@@ -195,9 +216,9 @@ def filter_tags(tags):
     tasks_tags = []
     for tag in tags:
         for i in tag:
-            if i not in tasks_tags:
-                tasks_tags.append(i)
-    return tasks_tags
+            tasks_tags.append(i)
+    uniq_tags = set(tasks_tags)
+    return uniq_tags
 
 
 def tasks_by_tag(request, tag_slug=None):
