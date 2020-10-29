@@ -18,9 +18,11 @@ def task_tags_updated(sender, instance, action, model, **kwargs):
             tag_id=tag.id,
             tag_count=count,
         )
+            list(t)[0].save()
         else:
             t.tag_count = count
-        t.save()
+
+            t.save()
 
 
 @receiver(post_save, sender=TodoItem)
