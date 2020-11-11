@@ -143,7 +143,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = '/var/www/sf-pyw-django/static'
 INTERNAL_IPS = ['127.0.0.1', 'localhost']
 
 LOGIN_REDIRECT_URL = "tasks:list"
