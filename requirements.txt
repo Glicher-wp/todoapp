@@ -11,7 +11,7 @@ django-taggit==0.23.0
 greenlet==0.4.16
 idna==2.9
 oauthlib==3.1.0
-Pillow==7.1.2
+Pillow==9.0.0
 psycopg2==2.8.5
 py-trello==0.17.1
 Pygments==2.6.1
